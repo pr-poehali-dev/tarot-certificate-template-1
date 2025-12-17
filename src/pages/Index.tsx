@@ -8,14 +8,28 @@ import Icon from '@/components/ui/icon';
 import html2canvas from 'html2canvas';
 import { jsPDF } from 'jspdf';
 
+const generateCertificateCode = () => {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  const segments = 3;
+  const segmentLength = 4;
+  
+  return Array.from({ length: segments }, () => 
+    Array.from({ length: segmentLength }, () => 
+      chars[Math.floor(Math.random() * chars.length)]
+    ).join('')
+  ).join('-');
+};
+
 const Index = () => {
-  const [fullName, setFullName] = useState('');
   const [questionsCount, setQuestionsCount] = useState('');
+  const [certificateCode, setCertificateCode] = useState('');
   const [showCertificate, setShowCertificate] = useState(false);
   const certificateRef = useRef<HTMLDivElement>(null);
 
   const handleGenerate = () => {
-    if (fullName.trim() && questionsCount) {
+    if (questionsCount) {
+      const newCode = generateCertificateCode();
+      setCertificateCode(newCode);
       setShowCertificate(true);
     }
   };
@@ -36,7 +50,7 @@ const Index = () => {
     });
 
     pdf.addImage(imgData, 'PNG', 0, 0, 800, 600);
-    pdf.save(`certificate-${fullName.replace(/\s+/g, '-')}.pdf`);
+    pdf.save(`taro-certificate-${certificateCode}.pdf`);
   };
 
   return (
@@ -46,12 +60,12 @@ const Index = () => {
           <div className="flex items-center justify-center gap-3 mb-4">
             <Icon name="Sparkles" size={32} className="text-accent" />
             <h1 className="font-cormorant text-5xl font-bold text-foreground">
-              Генератор сертификатов таро
+              Подарочные сертификаты таро
             </h1>
             <Icon name="Sparkles" size={32} className="text-accent" />
           </div>
           <p className="text-muted-foreground text-lg">
-            Создайте мистический сертификат для раскладов таро
+            Создайте подарочный сертификат на расклады таро
           </p>
         </div>
 
@@ -59,27 +73,14 @@ const Index = () => {
           <Card className="bg-card border-border animate-scale-in">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 font-cormorant text-2xl">
-                <Icon name="FileText" size={24} className="text-accent" />
-                Данные сертификата
+                <Icon name="Gift" size={24} className="text-accent" />
+                Параметры сертификата
               </CardTitle>
               <CardDescription>
-                Заполните информацию для создания персонализированного сертификата
+                Укажите номинал подарочного сертификата
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              <div className="space-y-2">
-                <Label htmlFor="fullName" className="text-foreground font-medium">
-                  ФИО получателя
-                </Label>
-                <Input
-                  id="fullName"
-                  placeholder="Введите полное имя"
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
-                  className="bg-input border-border text-foreground"
-                />
-              </div>
-
               <div className="space-y-2">
                 <Label htmlFor="questionsCount" className="text-foreground font-medium">
                   Количество вопросов
@@ -95,9 +96,16 @@ const Index = () => {
                 />
               </div>
 
+              {certificateCode && (
+                <div className="p-4 bg-accent/10 border border-accent/30 rounded-lg">
+                  <p className="text-xs text-muted-foreground mb-1 uppercase tracking-wide">Код сертификата:</p>
+                  <p className="font-mono text-xl font-bold text-accent tracking-widest">{certificateCode}</p>
+                </div>
+              )}
+
               <Button
                 onClick={handleGenerate}
-                disabled={!fullName.trim() || !questionsCount}
+                disabled={!questionsCount}
                 className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-medium"
                 size="lg"
               >
@@ -129,8 +137,8 @@ const Index = () => {
                   <div className="inline-block shadow-2xl rounded-lg overflow-hidden transform hover:scale-105 transition-transform duration-300">
                     <TaroCertificate
                       ref={certificateRef}
-                      fullName={fullName}
                       questionsCount={parseInt(questionsCount)}
+                      certificateCode={certificateCode}
                       date={new Date().toLocaleDateString('ru-RU')}
                     />
                   </div>

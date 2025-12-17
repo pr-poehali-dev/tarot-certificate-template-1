@@ -2,13 +2,13 @@ import { forwardRef } from 'react';
 import Icon from '@/components/ui/icon';
 
 interface TaroCertificateProps {
-  fullName: string;
   questionsCount: number;
+  certificateCode: string;
   date: string;
 }
 
 const TaroCertificate = forwardRef<HTMLDivElement, TaroCertificateProps>(
-  ({ fullName, questionsCount, date }, ref) => {
+  ({ questionsCount, certificateCode, date }, ref) => {
     return (
       <div 
         ref={ref}
@@ -91,27 +91,42 @@ const TaroCertificate = forwardRef<HTMLDivElement, TaroCertificateProps>(
         <div className="relative z-10 flex flex-col items-center justify-center h-full px-16 text-center">
           <div className="mb-8">
             <h1 className="font-cormorant text-6xl font-bold text-accent mb-2 tracking-wide">
-              СЕРТИФИКАТ
+              ПОДАРОЧНЫЙ
             </h1>
+            <h2 className="font-cormorant text-5xl font-bold text-foreground mb-3">
+              СЕРТИФИКАТ
+            </h2>
             <div className="h-px w-48 mx-auto bg-gradient-to-r from-transparent via-accent to-transparent" />
           </div>
 
-          <div className="mb-6">
+          <div className="mb-8">
             <p className="text-muted-foreground text-sm uppercase tracking-widest mb-4">
-              настоящим подтверждается, что
+              Расклад на картах таро
             </p>
-            <h2 className="font-cormorant text-4xl font-semibold text-foreground mb-4">
-              {fullName || 'Имя Фамилия'}
-            </h2>
+            <div className="bg-card/30 backdrop-blur-sm border border-accent/30 rounded-lg p-6 max-w-md mx-auto">
+              <p className="text-muted-foreground text-base mb-2">
+                Номинал сертификата
+              </p>
+              <div className="flex items-baseline justify-center gap-2">
+                <span className="font-cormorant text-6xl font-bold text-accent">
+                  {questionsCount || '0'}
+                </span>
+                <span className="text-2xl text-foreground">
+                  {questionsCount === 1 ? 'вопрос' : questionsCount < 5 ? 'вопроса' : 'вопросов'}
+                </span>
+              </div>
+            </div>
           </div>
 
-          <div className="mb-8">
-            <p className="text-muted-foreground text-base leading-relaxed max-w-md">
-              прошёл(а) расклад на картах таро и получил(а) ответы на 
-              <span className="font-cormorant text-2xl font-bold text-accent mx-2">
-                {questionsCount || '0'}
-              </span>
-              {questionsCount === 1 ? 'вопрос' : questionsCount < 5 ? 'вопроса' : 'вопросов'}
+          <div className="mb-6">
+            <div className="flex items-center justify-center gap-2 mb-2">
+              <Icon name="Hash" size={16} className="text-accent" />
+              <p className="text-xs text-muted-foreground uppercase tracking-widest">
+                Код сертификата
+              </p>
+            </div>
+            <p className="font-mono text-lg font-bold text-accent tracking-widest">
+              {certificateCode || 'XXXX-XXXX-XXXX'}
             </p>
           </div>
 
@@ -125,7 +140,7 @@ const TaroCertificate = forwardRef<HTMLDivElement, TaroCertificateProps>(
 
           <div className="mt-auto pt-8">
             <p className="text-xs text-muted-foreground uppercase tracking-wider">
-              {date || new Date().toLocaleDateString('ru-RU')}
+              Действителен с {date || new Date().toLocaleDateString('ru-RU')}
             </p>
           </div>
         </div>
